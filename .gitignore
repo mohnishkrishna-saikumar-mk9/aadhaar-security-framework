@@ -1,0 +1,24 @@
+# Environment
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv/
+venv/
+ENV/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Temp Files
+data/temp/*
+!data/temp/.gitkeep
+
+# Ignore large datasets and source image folders (too large for GitHub)
+dataset_preparation/sources/
+*.zip
+*.tar.gz
+
+# Note: We ARE allowing the SQLite database (identity_system.db) and the trained .pkl models 
+# to be committed so that the system works out of the box for anyone who clones it!

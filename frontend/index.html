@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identity Shield | Digital Identity Verification Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;      /* Navy Blue */
+            --primary-hover: #1e293b;
+            --secondary: #0f766e;    /* Teal */
+            --bg-color: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #15803d;
+            --error: #b91c1c;
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header */
+        header {
+            width: 100%;
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header-left p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .header-right .badge {
+            background-color: #f1f5f9;
+            color: var(--text-light);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
+
+        /* Main Container */
+        main {
+            width: 100%;
+            max-width: 900px;
+            margin: 2rem auto;
+            flex: 1;
+            padding: 0 1rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text-main);
+        }
+
+        /* Panels */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Stepper */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .step {
+            position: relative;
+            z-index: 1;
+            background: var(--surface);
+            padding: 0 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step.active {
+            color: var(--primary);
+        }
+        
+        .step.completed {
+            color: var(--secondary);
+        }
+
+        .step-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--bg-color);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            font-size: 0.8rem;
+        }
+
+        .step.active .step-num {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .step.completed .step-num {
+            border-color: var(--secondary);
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Wizard Views */
+        .wizard-view {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .wizard-view.active {
+            display: flex;
+        }
+
+        .wizard-title {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .wizard-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 400px;
+        }
+
+        .form-group {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--text-main);
+            background: var(--bg-color);
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            cursor: pointer;
+            background: var(--bg-color);
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--secondary);
+            background: #f0fdfa;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-name {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        button {
+            padding: 0.75rem 2rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
+        
+        button.secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+        button.secondary:hover {
+            background-color: var(--bg-color);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Result View */
+        .checklist {
+            width: 100%;
+            max-width: 400px;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .check-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .check-item.success .status { color: var(--success); }
+        .check-item.error .status { color: var(--error); }
+        
+        .final-panel {
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: none;
+            text-align: left;
+        }
+        
+        .final-panel-header {
+            padding: 1.5rem;
+            color: white;
+        }
+        
+        .final-panel-header.success { background-color: var(--success); }
+        .final-panel-header.error { background-color: var(--error); }
+        
+        .final-panel-body {
+            padding: 1.5rem;
+            background: var(--bg-color);
+        }
+        
+        .demo-data-notice {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        
+        .details-grid {
+            /* Now handled mostly inline for the specific card layout */
+        }
+        
+        .details-grid strong {
+            color: var(--text-light);
+        }
+        
+        /* Collapsible Technical Details */
+        .collapsible {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            text-align: left;
+        }
+        
+        .collapsible-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--surface);
+            border: none;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+        .collapsible-btn:hover { background: var(--bg-color); }
+        
+        .collapsible-content {
+            display: none;
+            padding: 1rem;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+            display: none;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            width: 100%;
+            max-width: 600px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <h1>Identity Shield</h1>
+            <p>Digital Identity Verification Portal</p>
+        </div>
+        <div class="header-right">
+            <span class="badge">Research Prototype</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('user-mode')">Verification Portal</div>
+            <div class="tab" onclick="switchTab('research-mode')">Research Analysis</div>
+        </div>
+
+        <!-- USER MODE -->
+        <div id="user-mode" class="tab-panel active">
+            <div class="card">
+                <div class="stepper">
+                    <div class="step active" id="step-1-nav"><div class="step-num">1</div> Identity</div>
+                    <div class="step" id="step-2-nav"><div class="step-num">2</div> Face</div>
+                    <div class="step" id="step-3-nav"><div class="step-num">3</div> Fingerprint</div>
+                    <div class="step" id="step-4-nav"><div class="step-num">4</div> Result</div>
+                </div>
+
+                <!-- Step 1 -->
+                <div class="wizard-view active" id="view-step-1">
+                    <h2 class="wizard-title">Identity Verification</h2>
+                    <p class="wizard-desc">Please enter the 12-digit identity number assigned to the subject.</p>
+                    
+                    <div class="form-group">
+                        <label>Identity Number</label>
+                        <input type="text" id="identityNumber" placeholder="Enter 12-digit identity number" maxlength="20">
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 2rem;">Your identity number is securely hashed before verification.</p>
+                    
+                    <div class="spinner" id="step1-spinner"></div>
+                    <div id="step1-error" style="color: var(--error); margin-bottom:1rem; font-size:0.9rem; display:none;"></div>
+                    
+                    <button onclick="verifyIdentity()" id="btn-step1">Continue</button>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="wizard-view" id="view-step-2">
+                    <h2 class="wizard-title">Face Verification</h2>
+                    <p class="wizard-desc">Face verification checks whether the presented face corresponds to the registered identity.</p>
+                    
+                    <div class="file-upload">
+                        <div>Position your face within the frame</div>
+                        <div style="font-size:0.8rem; color:var(--text-light); margin-top:0.5rem;">(Upload Face Image for testing)</div>
+                        <input type="file" id="faceImage" accept="image/*" onchange="showFilename('faceImage', 'faceName')">
+                        <span class="file-name" id="faceName"></span>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="secondary" onclick="goToStep(1)">Back</button>
+                        <button onclick="goToStep(3)" id="btn-step2">Continue</button>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="wizard-view" id="view-step-3">
+                    <h2 class="wizard-title">Fingerprint Verification</h2>
+                    <p class="wizard-desc">Place or upload the registered fingerprint sample.</p>
+                    
+                    <div class="file-upload">
+                        <div>Upload Fingerprint Image</div>
+                        <input type="file" id="fingerprintImage" accept="image/*" onchange="showFilename('fingerprintImage', 'fpName')">
+                        <span class="file-name" id="fpName"></span>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="secondary" onclick="goToStep(2)">Back</button>
+                        <button onclick="submitFullVerification()" id="btn-step3">Verify Identity</button>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="wizard-view" id="view-step-4">
+                    <h2 class="wizard-title">Verifying Identity</h2>
+                    <p class="wizard-desc">Executing multimodal security protocol.</p>
+                    
+                    <div class="spinner" id="final-spinner" style="display: block;"></div>
+                    
+                    <div class="checklist" id="final-checklist">
+                        <div class="check-item" id="chk-cred"><span>Identity Credential</span><span class="status">—</span></div>
+                        <div class="check-item" id="chk-face"><span>Face Verification</span><span class="status">—</span></div>
+                        <div class="check-item" id="chk-fp"><span>Fingerprint Verification</span><span class="status">—</span></div>
+                        <div class="check-item" id="chk-fusion"><span>Biometric Consistency</span><span class="status">—</span></div>
+                    </div>
+                    
+                    <div class="final-panel" id="result-panel">
+                        <div class="final-panel-header" id="result-header">
+                            <h3 id="result-title">Identity Verified</h3>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;" id="result-subtitle">All required checks completed.</p>
+                        </div>
+                        <div class="final-panel-body">
+                            <div class="demo-data-notice">Demo Data — Not an official record</div>
+                            <div class="details-grid" id="result-grid">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="collapsible" id="tech-details" style="display:none;">
+                        <button class="collapsible-btn" onclick="toggleCollapsible()">Verification Details <span>+</span></button>
+                        <div class="collapsible-content" id="tech-content"></div>
+                    </div>
+                    
+                    <button class="secondary" style="margin-top: 2rem; display:none;" id="btn-reset" onclick="resetFlow()">Start New Verification</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RESEARCH MODE -->
+        <div id="research-mode" class="tab-panel">
+            <div class="card">
+                <h2 class="wizard-title" style="text-align: left; margin-bottom:1.5rem;">Research Mode: Attack Simulation</h2>
+                
+                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1.5rem;">
+                    This mode bypasses the wizard and directly submits the form data stored in the current User Mode session. The system will automatically analyze the multi-modal response to detect the specific attack vector. Ensure you have selected images in the Verification Portal first.
+                </p>
+                
+                <button onclick="runResearchTest()">Run Security Test</button>
+                
+                <div id="research-result" style="margin-top: 2rem; padding: 1rem; background: var(--bg-color); border: 1px solid var(--border); border-radius: var(--radius); font-family: monospace; white-space: pre-wrap; font-size: 0.85rem; display:none;">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Identity Shield is an academic research prototype.<br>It is not affiliated with UIDAI or any government authority.<br>All identity information shown in this application is synthetic/demo data.</p>
+    </footer>
+
+    <script>
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Stepper Navigation
+        function goToStep(step) {
+            document.querySelectorAll('.wizard-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-step-' + step).classList.add('active');
+            
+            for(let i=1; i<=4; i++) {
+                const nav = document.getElementById('step-' + i + '-nav');
+                nav.classList.remove('active', 'completed');
+                if(i < step) nav.classList.add('completed');
+                if(i === step) nav.classList.add('active');
+            }
+        }
+
+        function showFilename(inputId, displayId) {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(displayId);
+            display.textContent = input.files[0] ? input.files[0].name : '';
+        }
+
+        function toggleCollapsible() {
+            const content = document.getElementById('tech-content');
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Step 1: Credential Verification
+        async function verifyIdentity() {
+            const idInput = document.getElementById('identityNumber').value;
+            const errDiv = document.getElementById('step1-error');
+            const spinner = document.getElementById('step1-spinner');
+            const btn = document.getElementById('btn-step1');
+            
+            if(!idInput) {
+                errDiv.textContent = "Please enter an identity number.";
+                errDiv.style.display = "block";
+                return;
+            }
+            
+            errDiv.style.display = "none";
+            btn.style.display = "none";
+            spinner.style.display = "block";
+            
+            const formData = new FormData();
+            formData.append('synthetic_id', idInput);
+            
+            try {
+                const response = await fetch('http://127.0.0.1:8000/verify/credential', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                spinner.style.display = "none";
+                btn.style.display = "block";
+                
+                if(result.status === "VALID") {
+                    goToStep(2);
+                } else {
+                    errDiv.textContent = "Identity credential could not be verified.";
+                    errDiv.style.display = "block";
+                }
+            } catch(e) {
+                spinner.style.display = "none";
+                btn.style.display = "block";
+                errDiv.textContent = "Error connecting to server: " + e.message;
+                errDiv.style.display = "block";
+            }
+        }
+
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        function setCheck(id, state, text) {
+            const el = document.getElementById(id);
+            el.className = `check-item ${state}`;
+            el.querySelector('.status').textContent = text;
+        }
+
+        // Step 4: Full Submission
+        async function submitFullVerification() {
+            goToStep(4);
+            
+            // Reset state
+            document.getElementById('final-spinner').style.display = "block";
+            document.getElementById('result-panel').style.display = "none";
+            document.getElementById('tech-details').style.display = "none";
+            document.getElementById('btn-reset').style.display = "none";
+            ['chk-cred', 'chk-face', 'chk-fp', 'chk-fusion'].forEach(id => {
+                setCheck(id, '', '—');
+            });
+            
+            const formData = new FormData();
+            formData.append('synthetic_id', document.getElementById('identityNumber').value);
+            formData.append('attack_type', "Genuine User"); // User mode is always genuine intent
+            
+            const faceFile = document.getElementById('faceImage').files[0];
+            const fpFile = document.getElementById('fingerprintImage').files[0];
+            
+            if(faceFile) formData.append('face_image', faceFile);
+            if(fpFile) formData.append('fingerprint_image', fpFile);
+            
+            try {
+                const response = await fetch('http://localhost:8000/authenticate', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                document.getElementById('final-spinner').style.display = "none";
+                
+                // Animate sequence
+                await delay(300);
+                if(result.credential_result === "VALID" || result.status==="ACCESS GRANTED") {
+                    setCheck('chk-cred', 'success', '✓ Verified');
+                } else {
+                    setCheck('chk-cred', 'error', '✕ Failed');
+                }
+                
+                await delay(500);
+                if(result.face_pad_result === "LIVE" && result.face_match_score !== null && !result.reason?.includes("Face verification failed")) {
+                    setCheck('chk-face', 'success', '✓ Verified');
+                } else if (result.face_pad_result === "SPOOF" || result.reason?.includes("Face")) {
+                    setCheck('chk-face', 'error', '✕ Failed');
+                }
+                
+                await delay(500);
+                if(result.fingerprint_pad_result === "GENUINE" && result.fingerprint_match_score !== null && !result.reason?.includes("Fingerprint verification failed")) {
+                    setCheck('chk-fp', 'success', '✓ Verified');
+                } else if (result.fingerprint_pad_result === "SPOOF" || result.reason?.includes("Fingerprint")) {
+                    setCheck('chk-fp', 'error', '✕ Failed');
+                }
+                
+                await delay(500);
+                if(result.status === "ACCESS GRANTED") {
+                    setCheck('chk-fusion', 'success', '✓ Verified');
+                    
+                    document.getElementById('result-header').className = "final-panel-header success";
+                    document.getElementById('result-title').textContent = "Identity Verified";
+                    document.getElementById('result-subtitle').textContent = "All required identity and biometric checks have been completed successfully.";
+                    
+                    document.getElementById('result-grid').innerHTML = `
+                        <div style="display:flex; gap:1.5rem; align-items:center;">
+                            <img src="${URL.createObjectURL(document.getElementById('faceImage').files[0])}" alt="Face" style="width:100px; height:120px; object-fit:cover; border-radius:4px; border:1px solid var(--border);">
+                            <div style="flex:1;">
+                                <div style="font-size:1.2rem; font-weight:700; color:var(--primary); margin-bottom:0.25rem;">${result.demo_details.name}</div>
+                                <div style="font-size:0.9rem; color:var(--text-light); margin-bottom:0.1rem;">Age: ${result.demo_details.age} | Gender: ${result.demo_details.gender}</div>
+                                <div style="font-size:0.9rem; color:var(--text-light); margin-bottom:0.75rem; max-width:250px; line-height:1.2;">Address: ${result.demo_details.address}</div>
+                                <div style="font-size:1.1rem; font-weight:600; font-family:monospace; letter-spacing:1px; color:var(--primary);">
+                                    ${result.demo_details.aadhaar_number.replace(/(\d{4})/g, '$1 ').trim()}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    setCheck('chk-fusion', 'error', '✕ Failed');
+                    
+                    document.getElementById('result-header').className = "final-panel-header error";
+                    document.getElementById('result-title').textContent = "Identity Verification Failed";
+                    document.getElementById('result-subtitle').textContent = "One or more required verification checks could not be completed.";
+                    
+                    let attackGuess = "Unknown Attack";
+                    let attackCode = "ATT-UNKNOWN";
+                    
+                    if (result.credential_result !== "VALID" || result.reason?.includes("credential")) {
+                        attackGuess = "Invalid Credential / Hash Mismatch";
+                        attackCode = "ATT-CRED-01 / ATT-CRED-03";
+                    } else if (result.face_pad_result === "SPOOF" || result.reason?.includes("Face Presentation")) {
+                        attackGuess = "Face Presentation Attack (Photo/Screen/Deepfake)";
+                        attackCode = "ATT-FACE-02 / 03 / 04 / 05";
+                    } else if (result.reason?.includes("Face match failed") || result.reason?.includes("Face verification")) {
+                        attackGuess = "Wrong Person Face (Impostor)";
+                        attackCode = "ATT-FACE-01";
+                    } else if (result.fingerprint_pad_result === "SPOOF" || result.reason?.includes("Fingerprint Presentation")) {
+                        attackGuess = "Fingerprint Presentation Attack (Gummy/Altered)";
+                        attackCode = "ATT-FP-02 / 03 / 04 / 05";
+                    } else if (result.reason?.includes("Fingerprint match failed") || result.reason?.includes("Fingerprint verification")) {
+                        attackGuess = "Wrong Fingerprint (Impostor)";
+                        attackCode = "ATT-FP-01";
+                    }
+                    
+                    document.getElementById('result-grid').innerHTML = `
+                        <strong>Reason:</strong> <span>${result.reason}</span>
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+                            <strong style="color: var(--error);">Attack Analysis (Research Prototype):</strong><br>
+                            <span style="font-size:0.9rem; font-weight:600;">Detected Vector:</span> <span>${attackGuess}</span><br>
+                            <span style="font-size:0.9rem; font-weight:600;">Matrix Reference:</span> <span style="font-family:monospace; background:#fee2e2; padding:2px 4px; border-radius:4px;">${attackCode}</span>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('result-panel').style.display = "block";
+                
+                // Tech details
+                document.getElementById('tech-content').textContent = JSON.stringify(result, null, 2);
+                document.getElementById('tech-details').style.display = "block";
+                document.getElementById('btn-reset').style.display = "block";
+                
+            } catch(e) {
+                document.getElementById('final-spinner').style.display = "none";
+                alert("Error during verification: " + e.message);
+                document.getElementById('btn-reset').style.display = "block";
+            }
+        }
+        
+        function resetFlow() {
+            document.getElementById('identityNumber').value = "";
+            document.getElementById('faceImage').value = "";
+            document.getElementById('fingerprintImage').value = "";
+            document.getElementById('faceName').textContent = "";
+            document.getElementById('fpName').textContent = "";
+            goToStep(1);
+        }
+
+        // Research Mode Runner
+        async function runResearchTest() {
+            const formData = new FormData();
+            const syntheticId = document.getElementById('identityNumber').value || "None Provided";
+            formData.append('synthetic_id', document.getElementById('identityNumber').value);
+            formData.append('attack_type', "Auto-Detect Simulation");
+            
+            const faceFile = document.getElementById('faceImage').files[0];
+            const fpFile = document.getElementById('fingerprintImage').files[0];
+            
+            if(faceFile) formData.append('face_image', faceFile);
+            if(fpFile) formData.append('fingerprint_image', fpFile);
+            
+            const resDiv = document.getElementById('research-result');
+            resDiv.style.display = "block";
+            resDiv.innerHTML = "Executing attack simulation...";
+            
+            try {
+                const response = await fetch('http://localhost:8000/authenticate', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                let category = "Unknown";
+                let attackName = "Genuine User";
+                let description = "Normal verification flow without attacks";
+                let expectedResponse = "ACCESS GRANTED";
+                let attackCode = "VALID-01";
+                
+                if (result.credential_result !== "VALID" || result.reason?.includes("credential")) {
+                    category = "Credential";
+                    attackName = "Invalid/Modified Credential or Hash Mismatch";
+                    description = "Entering a 12-digit number that does not exist or has been modified.";
+                    expectedResponse = "Block (Gate 1)";
+                    attackCode = "ATT-CRED-01 / 02 / 03";
+                } else if (result.face_pad_result === "SPOOF" || result.reason?.includes("Face Presentation")) {
+                    category = "Face (or Cross-Modal)";
+                    attackName = "Face Presentation Attack (Spoof)";
+                    description = "Holding up a printed photo, screen replay, deepfake, or synthetic face. (If FP is also spoofed, this corresponds to ATT-CROSS-04/06).";
+                    expectedResponse = "Block (Gate 2 - PAD)";
+                    attackCode = "ATT-FACE-02 / 03 / 04 / 05";
+                } else if (result.reason?.includes("Face match failed") || result.reason?.includes("Face verification")) {
+                    category = "Face (or Cross-Modal)";
+                    attackName = "Wrong Person Face (Impostor)";
+                    description = "Submitting another real person's live face. (If FP is also wrong, this corresponds to ATT-CROSS-02/03).";
+                    expectedResponse = "Block (Gate 3)";
+                    attackCode = "ATT-FACE-01";
+                } else if (result.fingerprint_pad_result === "SPOOF" || result.reason?.includes("Fingerprint Presentation")) {
+                    category = "Fingerprint (or Cross-Modal)";
+                    attackName = "Fingerprint Presentation Attack";
+                    description = "Using an artificial gummy finger, latent lift, or altered fingerprint. (If face was correct, this corresponds to ATT-CROSS-05).";
+                    expectedResponse = "Block (Gate 4 - PAD)";
+                    attackCode = "ATT-FP-02 / 03 / 05";
+                } else if (result.reason?.includes("Fingerprint match failed") || result.reason?.includes("Fingerprint verification")) {
+                    category = "Fingerprint (or Cross-Modal)";
+                    attackName = "Wrong Fingerprint (Impostor)";
+                    description = "Submitting another real person's genuine fingerprint. (If face was correct, this corresponds to ATT-CROSS-01).";
+                    expectedResponse = "Block (Gate 5)";
+                    attackCode = "ATT-FP-01";
+                }
+                
+                let faceScoreDisplay = (result.face_match_score !== null && result.face_match_score !== undefined) ? result.face_match_score.toFixed(4) : "Skipped (Blocked Earlier)";
+                let fpScoreDisplay = (result.fingerprint_match_score !== null && result.fingerprint_match_score !== undefined) ? result.fingerprint_match_score.toString() : "Skipped (Blocked Earlier)";
+                
+                let htmlOutput = `<h3 style="color:var(--primary); margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem;">Attack Matrix Analysis</h3>`;
+                
+                // Add the Input Vectors so they can see what images were tested
+                htmlOutput += `
+                <div style="background:var(--surface); padding:1rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom: 1.5rem;">
+                    <div style="margin-bottom:0.75rem;"><strong style="color: var(--primary);">Tested Input Vectors</strong></div>
+                    <div style="margin-bottom:0.5rem; font-size: 0.9rem;"><strong>Identity ID:</strong> <span>${syntheticId}</span></div>
+                    <div style="margin-bottom:0.5rem; font-size: 0.9rem;"><strong>Face Image:</strong> <span>${faceFile ? faceFile.name : 'None'}</span></div>
+                    <div style="margin-bottom:0.5rem; font-size: 0.9rem;"><strong>Fingerprint Image:</strong> <span>${fpFile ? fpFile.name : 'None'}</span></div>
+                </div>`;
+                
+                htmlOutput += `
+                <div style="background:var(--surface); padding:1rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom: 1.5rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 0.75rem;">
+                        <strong>Matrix Code:</strong> <span style="font-family:monospace; background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:600;">${attackCode}</span>
+                    </div>
+                    <div style="margin-bottom:0.75rem;"><strong>Category:</strong> <span>${category}</span></div>
+                    <div style="margin-bottom:0.75rem;"><strong>Attack Name:</strong> <span style="color:${result.status === 'BLOCK' ? 'var(--error)' : 'var(--success)'}; font-weight:600;">${attackName}</span></div>
+                    <div style="margin-bottom:0.75rem;"><strong>Description:</strong> <span style="color:var(--text-light);">${description}</span></div>
+                    <div><strong>Expected System Response:</strong> <span style="font-weight:600;">${expectedResponse}</span></div>
+                </div>`;
+                
+                htmlOutput += `<div style="background:var(--surface); padding:1rem; border-radius:var(--radius); border:1px solid var(--border);">
+                    <div style="margin-bottom:0.75rem;"><strong style="color: var(--primary);">Verification Scores</strong></div>
+                    <div style="margin-bottom:0.5rem; display:flex; justify-content:space-between;">
+                        <span>Face Match Distance (DeepFace):</span> <strong>${faceScoreDisplay}</strong>
+                    </div>
+                    <div style="margin-bottom:1rem; display:flex; justify-content:space-between;">
+                        <span>Fingerprint Good Matches (ORB):</span> <strong>${fpScoreDisplay}</strong>
+                    </div>
+                    <div style="margin-bottom:0.5rem; border-top:1px dashed var(--border); padding-top:0.75rem;"><strong>Actual System Action:</strong> ${result.status}</div>
+                    <div style="margin-bottom:0.5rem;"><strong>Reason:</strong> ${result.reason || "Verification Passed"}</div>
+                </div>`;
+                
+                htmlOutput += `<div style="margin-top:1.5rem;"><strong>Raw Telemetry:</strong><br><pre style="margin-top:0.5rem; background:#1e293b; color:#cbd5e1; padding:1rem; border-radius:var(--radius); overflow-x:auto;">${JSON.stringify(result, null, 2)}</pre></div>`;
+                
+                resDiv.innerHTML = htmlOutput;
+                
+            } catch (e) {
+                resDiv.innerHTML = "<strong style='color:var(--error);'>Simulation Error:</strong> " + e.message;
+            }
+        }
+    </script>
+</body>
+</html>
