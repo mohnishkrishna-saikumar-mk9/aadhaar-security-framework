@@ -59,19 +59,19 @@ Simply double-click the `run.bat` file in the root directory!
 
 **Step 1 — Identity Verification:** Enter the 12-digit synthetic Aadhaar number.
 
-![Step 1 - Identity](docs/step1_identity.png)
+![Step 1 - Identity](aadhaar-identity-shield/data/docs/step1_identity.png)
 
 **Step 2 — Face Verification:** Upload the face image for liveness check and 1:1 matching.
 
-![Step 2 - Face](docs/step2_face.png)
+![Step 2 - Face](aadhaar-identity-shield/data/docs/step2_face.png)
 
 **Step 3 — Fingerprint Verification:** Upload the fingerprint image for PAD check and matching.
 
-![Step 3 - Fingerprint](docs/step3_fingerprint.png)
+![Step 3 - Fingerprint](aadhaar-identity-shield/data/docs/step3_fingerprint.png)
 
 **Step 4 — Result:** All 5 gates passed. The Digital Identity Card is displayed.
 
-![Step 4 - Genuine Result](docs/step4_result_genuine.png)
+![Step 4 - Genuine Result](aadhaar-identity-shield/data/docs/step4_result_genuine.png)
 
 ---
 
@@ -80,8 +80,8 @@ Simply double-click the `run.bat` file in the root directory!
 ### User Mode (Verification Portal)
 Try logging in with a genuine synthetic user:
 - **Identity Number:** `955137883716` *(Swati Malhotra)*
-- **Face Image:** `demo_dataset/faces/woman_3434.jpg`
-- **Fingerprint Image:** `demo_dataset/fingerprints/540__F_Right_ring_finger.BMP`
+- **Face Image:** `aadhaar-identity-shield/data/demo_dataset/faces/woman_3434.jpg`
+- **Fingerprint Image:** `aadhaar-identity-shield/data/demo_dataset/fingerprints/540__F_Right_ring_finger.BMP`
 
 If all gates pass, you will see the **"Identity Verified"** result with the Digital Identity Card.
 
