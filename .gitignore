@@ -22,3 +22,6 @@ dataset_preparation/sources/
 
 # Note: We ARE allowing the SQLite database (identity_system.db) and the trained .pkl models 
 # to be committed so that the system works out of the box for anyone who clones it!
+
+aadhaar-inspired-security/
+data/aadhaar-inspired-security/
