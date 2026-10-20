@@ -63,16 +63,41 @@
 
 ---
 
-## 🖥️ Live Demo Screenshots
+## 🖥️ Live Demo — Genuine User Verification
 
-### Genuine User Verification Flow
+The following walkthrough demonstrates a successful end-to-end verification for a genuine enrolled user (**Swati Malhotra**, ID: `955137883716`).
 
-| Step | Description | Screenshot |
-|:----:|-------------|------------|
-| **1** | Enter 12-digit Aadhaar identity number | ![Step 1](aadhaar-identity-shield/data/docs/step1_identity.png) |
-| **2** | Upload face image — liveness check + 1:1 match | ![Step 2](aadhaar-identity-shield/data/docs/step2_face.png) |
-| **3** | Upload fingerprint — PAD check + minutiae match | ![Step 3](aadhaar-identity-shield/data/docs/step3_fingerprint.png) |
-| **4** | All 5 gates passed — Digital Identity Card issued | ![Step 4](aadhaar-identity-shield/data/docs/step4_result_genuine.png) |
+---
+
+### Step 1 — Identity Credential Entry
+
+The user enters their 12-digit Aadhaar-style identity number. Gate 1 validates this credential by computing its **SHA-256 cryptographic hash** and comparing it against the stored hash in the database. If the number is unregistered or tampered, access is denied immediately.
+
+![Step 1 - Identity Credential Entry](aadhaar-identity-shield/data/docs/step1_identity.png)
+
+---
+
+### Step 2 — Face Upload & Liveness Check
+
+The user uploads a face image. The system first runs a **Presentation Attack Detection (PAD)** check using a Random Forest classifier trained on 96-dimensional RGB histogram features. Only a live, real face passes this gate. If the image is detected as a printed photo or screen replay, it is blocked here. A genuine live face then proceeds to 1:1 matching against the enrolled database photo using **FaceNet embeddings via DeepFace**.
+
+![Step 2 - Face Upload and Liveness Check](aadhaar-identity-shield/data/docs/step2_face.png)
+
+---
+
+### Step 3 — Fingerprint Upload & Liveness Check
+
+The user uploads a fingerprint scan. Gate 4 runs a **texture-based statistical PAD** to detect gummy fingers, synthetic prints, or altered fingerprints. A live fingerprint then passes to Gate 5 for 1:1 matching using **ORB feature descriptors + BFMatcher with Hamming distance** against the enrolled reference fingerprint.
+
+![Step 3 - Fingerprint Upload and Liveness Check](aadhaar-identity-shield/data/docs/step3_fingerprint.png)
+
+---
+
+### Step 4 — Verified: Digital Identity Card Issued
+
+All 5 gates passed successfully. The system issues a **Digital Identity Card** displaying the user's enrolled details with a ✅ Verified badge. Every gate result is logged for audit purposes.
+
+![Step 4 - Identity Verified Result](aadhaar-identity-shield/data/docs/step4_result_genuine.png)
 
 ---
 
@@ -201,3 +226,4 @@ aadhaar-security-framework/
 *All biometric data is 100% synthetic and does not represent any real individual.*
 
 </div>
+
