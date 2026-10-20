@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Massive local dataset sources
+dataset_preparation/
+aadhaar-inspired-security/
+
+# Temp files
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
