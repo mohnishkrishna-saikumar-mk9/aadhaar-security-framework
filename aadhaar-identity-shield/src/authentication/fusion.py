@@ -9,9 +9,12 @@ from authentication.face_pad import FacePAD
 from authentication.fingerprint import FingerprintVerifier
 from authentication.fingerprint_pad import FingerprintPAD
 
-BASE_DIR = r"D:\7th Semester\Information Security\aadhaar-inspired-security"
-METADATA_PATH = os.path.join(BASE_DIR, "data", "metadata", "identities.csv")
-DB_PATH = os.path.join(BASE_DIR, "database", "identity_system.db")
+# Resolve paths relative to this file's location
+_AUTH_DIR = os.path.dirname(os.path.abspath(__file__))      # src/authentication/
+_SRC_DIR = os.path.dirname(_AUTH_DIR)                        # src/
+_PROJECT_DIR = os.path.dirname(_SRC_DIR)                     # aadhaar-identity-shield/
+METADATA_PATH = os.path.join(_PROJECT_DIR, "data", "metadata", "identities.csv")
+DB_PATH = os.path.join(_PROJECT_DIR, "src", "database", "identity_system.db")
 
 class IdentityAuthenticator:
     def __init__(self):
@@ -24,7 +27,7 @@ class IdentityAuthenticator:
         # Load identity reference mapping for simulation
         self.identity_map = pd.read_csv(METADATA_PATH).set_index("identity_id")
         # Load full dataset for demo digital card
-        self.full_dataset = pd.read_csv(os.path.join(BASE_DIR, "demo_dataset", "aadhaar_dataset.csv"))
+        self.full_dataset = pd.read_csv(os.path.join(_PROJECT_DIR, "data", "demo_dataset", "aadhaar_dataset.csv"))
         self.full_dataset['aadhaar_number'] = self.full_dataset['aadhaar_number'].astype(str)
 
     def _log_attempt(self, log_data):
@@ -51,6 +54,19 @@ class IdentityAuthenticator:
             conn.close()
         except Exception as e:
             print(f"Failed to log attempt: {e}")
+
+    def _resolve_path(self, path_str):
+        if not path_str or not isinstance(path_str, str):
+            return path_str
+        if os.path.exists(path_str):
+            return path_str
+        p1 = os.path.join(_PROJECT_DIR, path_str)
+        if os.path.exists(p1):
+            return p1
+        p2 = os.path.join(_PROJECT_DIR, "data", path_str)
+        if os.path.exists(p2):
+            return p2
+        return path_str
 
     def authenticate(self, synthetic_id: str, probe_face_path: str, probe_fp_path: str, attack_type="Unknown") -> dict:
         """
@@ -80,8 +96,8 @@ class IdentityAuthenticator:
         log_data["identity_id"] = identity_id
         
         # Retrieve Enrolled References
-        enrolled_face = self.identity_map.loc[identity_id, 'face_path']
-        enrolled_fp = self.identity_map.loc[identity_id, 'fingerprint_path']
+        enrolled_face = self._resolve_path(self.identity_map.loc[identity_id, 'face_path'])
+        enrolled_fp = self._resolve_path(self.identity_map.loc[identity_id, 'fingerprint_path'])
 
         # GATE 2: Face Presentation Attack Detection (Liveness)
         fpad_res = self.face_pad.detect_liveness(probe_face_path)

@@ -2,6 +2,7 @@
 **Document Type:** Comprehensive Academic Project Technical Report & Engineering Specification
 **Principal Investigator & Author:** G Mohnish Krishna Sai Kumar
 **Student Registration Identifier:** AV.SC.U4CSE23013
+**Co-Author & Team Contributor:** Moulika
 **Degree Program:** Bachelor of Technology in Computer Science and Engineering
 **Specialization:** Information Security and Cyber Defense Systems
 **Institutional Milestone:** 7th Semester Senior Capstone Project

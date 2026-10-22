@@ -21,7 +21,10 @@ app.add_middleware(
 
 authenticator = IdentityAuthenticator()
 
-TEMP_DIR = r"D:\7th Semester\Information Security\aadhaar-inspired-security\data\temp"
+_API_DIR = os.path.dirname(os.path.abspath(__file__))
+_SRC_DIR = os.path.dirname(_API_DIR)
+_PROJECT_DIR = os.path.dirname(_SRC_DIR)
+TEMP_DIR = os.path.join(_PROJECT_DIR, "data", "temp")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 @app.post("/verify/credential")

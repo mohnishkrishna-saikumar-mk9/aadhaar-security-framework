@@ -2,7 +2,11 @@ import sqlite3
 import hashlib
 import os
 
-DB_PATH = r"D:\7th Semester\Information Security\aadhaar-inspired-security\database\identity_system.db"
+# Resolve DB path relative to this file's location
+_AUTH_DIR = os.path.dirname(os.path.abspath(__file__))      # src/authentication/
+_SRC_DIR = os.path.dirname(_AUTH_DIR)                        # src/
+_PROJECT_DIR = os.path.dirname(_SRC_DIR)                     # aadhaar-identity-shield/
+DB_PATH = os.path.join(_PROJECT_DIR, "src", "database", "identity_system.db")
 
 class CredentialValidator:
     def __init__(self, db_path=DB_PATH):

@@ -1,0 +1,111 @@
+================================================================
+  IDENTITY SHIELD — DEMO RECORDING SCRIPT
+  4 Test Cases: 1 Genuine + 3 Attack Scenarios
+================================================================
+
+BEFORE STARTING:
+  - Backend server must be running (run.bat or python src/api/main.py)
+  - Open: frontend/index.html in your browser
+  - All image files are in: data/demo_dataset/
+
+================================================================
+TEST CASE 1 — ✅ GENUINE USER (All 5 Gates PASS)
+================================================================
+Tab:         Verification Portal
+
+Identity No: 955137883716
+Name:        Swati Malhotra (Female)
+
+Face Image:
+  data\demo_dataset\faces\woman_3434.jpg
+
+Fingerprint:
+  data\demo_dataset\fingerprints\540__F_Right_ring_finger.BMP
+
+Expected Result:
+  ✅ Gate 1 PASS — Credential Valid
+  ✅ Gate 2 PASS — Live Face Detected
+  ✅ Gate 3 PASS — Face Match Confirmed
+  ✅ Gate 4 PASS — Live Fingerprint Detected
+  ✅ Gate 5 PASS — Fingerprint Match Confirmed
+  → IDENTITY VERIFIED (Digital Identity Card appears)
+
+================================================================
+TEST CASE 2 — ❌ CREDENTIAL ATTACK (Blocked at Gate 1)
+================================================================
+Tab:         Verification Portal
+Attack Type: Forged / Invalid Identity Number
+
+Identity No: 123456789999   ← (fake / not registered)
+
+Face Image:
+  data\demo_dataset\faces\woman_3434.jpg
+
+Fingerprint:
+  data\demo_dataset\fingerprints\540__F_Right_ring_finger.BMP
+
+Expected Result:
+  ❌ Gate 1 FAIL — Identity Number Not Found in Database
+  → ACCESS DENIED immediately (no biometrics even checked)
+
+Demo Point: System rejects at first gate before any biometric
+            is even processed. SHA-256 hash mismatch.
+
+================================================================
+TEST CASE 3 — ❌ IMPOSTOR ATTACK (Blocked at Gate 3)
+================================================================
+Tab:         Verification Portal
+Attack Type: Wrong Person's Face (Impostor)
+
+Identity No: 955137883716   ← Swati Malhotra's valid ID
+
+Face Image:
+  data\demo_dataset\faces\man_6204.jpg   ← WRONG PERSON
+
+Fingerprint:
+  data\demo_dataset\fingerprints\540__F_Right_ring_finger.BMP
+
+Expected Result:
+  ✅ Gate 1 PASS — Credential Valid
+  ✅ Gate 2 PASS — Live Face Detected (it is a real photo)
+  ❌ Gate 3 FAIL — Face Does NOT Match Enrolled Identity
+  → ACCESS DENIED (FaceNet cosine similarity too low)
+
+Demo Point: Even with a valid ID number, a different person's
+            real face is detected and blocked by FaceNet 1:1 matching.
+
+================================================================
+TEST CASE 4 — ❌ CROSS-MODAL ATTACK (Blocked at Gate 5)
+================================================================
+Tab:         Verification Portal
+Attack Type: Correct Face, Wrong Fingerprint (Cross-Modal)
+
+Identity No: 955137883716   ← Swati Malhotra's valid ID
+
+Face Image:
+  data\demo_dataset\faces\woman_3434.jpg   ← CORRECT face
+
+Fingerprint:
+  data\demo_dataset\fingerprints\326__M_Left_ring_finger_CR.BMP
+                                            ← WRONG person's fingerprint
+
+Expected Result:
+  ✅ Gate 1 PASS — Credential Valid
+  ✅ Gate 2 PASS — Live Face Detected
+  ✅ Gate 3 PASS — Face Match Confirmed
+  ✅ Gate 4 PASS — Live Fingerprint Detected
+  ❌ Gate 5 FAIL — Fingerprint Does NOT Match Enrolled Print
+  → ACCESS DENIED (ORB feature mismatch)
+
+Demo Point: The attacker passed 4 gates but the fingerprint
+            cross-modal mismatch is caught at the final gate.
+            Shows the depth of the multi-layer defense.
+
+================================================================
+DEMO ORDER RECOMMENDATION:
+  1. Start with Test Case 1 (Genuine) — show success flow
+  2. Show Test Case 2 (Credential) — blocked instantly at Gate 1
+  3. Show Test Case 3 (Impostor) — slips past Gate 2, caught at Gate 3
+  4. Show Test Case 4 (Cross-Modal) — most dramatic, passes 4 gates
+                                       then blocked at the last gate
+================================================================

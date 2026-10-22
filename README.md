@@ -15,7 +15,7 @@
   <b>IdentityShield</b> is a rigorous multi-gate biometric security platform engineered to simulate national-scale identity infrastructures (modeled after India's <b>Aadhaar</b> system). Featuring sequential hard-failure gating, presentation attack detection (PAD), FaceNet deep embeddings, ORB fingerprint matching, and comprehensive attack matrix evaluation.
 </p>
 
-[System Architecture](#-system-architecture--the-5-gate-pipeline) • [Live Verification Walkthrough](#-live-verification-walkthrough) • [Empirical Evaluation & Benchmarks](#-empirical-evaluation--benchmarks) • [Attack Test Matrix](#-attack-test-matrix) • [Quick Start](#-quick-start) • [Repository Structure](#-project-structure)
+[System Architecture](#-system-architecture--the-5-gate-pipeline) • [Live Demo Video](#-live-system-demonstration-video) • [Verification Walkthrough](#-live-verification-walkthrough) • [Project Deliverables](#-project-deliverables--academic-documentation) • [Empirical Benchmarks](#-empirical-evaluation--benchmarks) • [Attack Test Matrix](#-attack-test-matrix) • [Quick Start](#-quick-start)
 
 ---
 
@@ -67,6 +67,32 @@ flowchart TD
 | **3** | **1:1 Face Verification** | 128-dimensional deep embeddings via **FaceNet** (`DeepFace`) | Facial impostors, identity swapping, GAN synthetic deepfakes | Flagged as Facial Impostor Attempt |
 | **4** | **Fingerprint Liveness (PAD)** | Local Binary Pattern (LBP) texture analysis & statistical variance | Gummy fingers, latex casts, gelatin prints, 3D printed molds | Flagged as Fingerprint Spoof Attack |
 | **5** | **1:1 Fingerprint Match** | ORB (Oriented FAST and Rotated BRIEF) with Hamming distance matching | Fingerprint cross-modal swapping, incorrect finger placement | Flagged as Biometric Mismatch |
+
+
+---
+
+## 🎬 Live System Demonstration Video
+
+Experience the end-to-end execution of the **IdentityShield** 5-gate security pipeline in real-time. The demonstration highlights both seamless clearance for a bona fide citizen and immediate, automated hard-fail defense against presentation attacks, deepfake impostors, and cross-modal biometric swaps.
+
+<div align="center">
+  <video src="docs/demo_recording.mp4" controls="controls" width="100%" style="max-width: 880px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    Your browser does not support the video tag. You can watch or download the recording directly using the link below.
+  </video>
+</div>
+
+<p align="center">
+  <b>▶️ <a href="docs/demo_recording.mp4">Download / Play High-Definition Demo Recording (MP4)</a></b>
+</p>
+
+### 🎯 Test Scenarios Demonstrated in the Video
+
+| # | Evaluated Test Case | Input Vectors | Target Security Gate | System Enforcement Action | Expected Demo Result |
+| :---: | :--- | :--- | :---: | :--- | :--- |
+| **1** | **Genuine Citizen Authentication** | `ID: 955137883716`<br/>`Face: woman_3434.jpg`<br/>`FP: 540__F_Right_ring_finger.BMP` | **All 5 Gates** | Validates SHA-256 hash, confirms live facial tissue, matches FaceNet embedding (dist: `0.0`), confirms live fingerprint LBP texture, and verifies ORB minutiae (78 matches) | 🟢 **ACCESS GRANTED**<br/>Verified Digital Identity Card Issued |
+| **2** | **Credential Brute-Force / Tampering** | `ID: 123456789999`<br/>*(Unenrolled / Fabricated ID)* | **Gate 1** | SHA-256 hash lookup fails against salted database; pipeline immediately aborts before biometric ingestion | ❌ **BLOCKED at Gate 1**<br/>`Access Denied: Credential not recognized` |
+| **3** | **Facial Impostor Attack** | `ID: 955137883716`<br/>`Face: man_6204.jpg` *(Impostor)*<br/>`FP: 540__F_Right_ring_finger.BMP` | **Gate 3** | FaceNet deep embedding distance exceeds strict cosine threshold ($\tau = 0.40$), identifying an unauthorized face presentation | ❌ **BLOCKED at Gate 3**<br/>`Face verification failed (NON-MATCH)` |
+| **4** | **Cross-Modal Biometric Swap** | `ID: 955137883716`<br/>`Face: woman_3434.jpg`<br/>`FP: 326__M_Left_ring_finger_CR.BMP` | **Gate 5** | ORB keypoint descriptor Hamming distance matching falls below minutiae acceptance threshold | ❌ **BLOCKED at Gate 5**<br/>`Fingerprint verification failed (NON-MATCH)` |
 
 ---
 
@@ -183,6 +209,12 @@ aadhaar-security-framework/
 │   ├── 05_attack_detection_rate.png
 │   └── 06_unauthorized_acceptance_rate.png
 │
+├── docs/                                # 📑 Deliverables, technical reports & demo video
+│   ├── demo_recording.mp4
+│   ├── Identity_Shield_Research_Report.pdf
+│   ├── Identity_Shield_Presentation.pptx
+│   └── COMPREHENSIVE_PROJECT_REPORT.md
+│
 └── aadhaar-identity-shield/             # 💻 Core Application & Model Engine
     ├── run.bat                          # 🚀 One-click Windows server & frontend launcher
     ├── .gitignore                       # 🛡️ Hardened ignore rules
@@ -270,6 +302,18 @@ The included demo suite contains ready-to-test synthetic citizen identities:
 
 ---
 
+## 📑 Project Deliverables & Academic Documentation
+
+All research documentation, formal academic reports, presentation slides, and evaluation scripts are consolidated in the repository:
+
+- 📄 **[Comprehensive Academic Project Technical Report (PDF)](docs/Identity_Shield_Research_Report.pdf):** In-depth research paper detailing the mathematical formulations, ISO/IEC 30107 compliance, ISO/IEC 19794-2 minutiae algorithms, and DPDP Act 2023 privacy analysis.
+- 📊 **[Capstone Project Presentation Deck (PPTX)](docs/Identity_Shield_Presentation.pptx):** High-impact technical slide deck prepared for academic and defense presentations.
+- 📝 **[Full Engineering Specification & Architecture Report (Markdown)](docs/COMPREHENSIVE_PROJECT_REPORT.md):** Complete textual and mathematical documentation of the 5-gate pipeline.
+- 🎬 **[High-Definition Demo Video Recording (MP4)](docs/demo_recording.mp4):** Full recording of the live browser kiosk verification flow and attack simulations.
+- 📋 **[Live Demo Execution Script & Test Vectors (TXT)](DEMO_SCRIPT.txt):** Ready-to-run credentials and vector combinations for reproducibility.
+
+---
+
 ## 🔐 Security & Privacy Architecture
 
 - **100% On-Premise Execution:** Biometric templates and facial features are extracted and compared entirely on local hardware.
@@ -282,6 +326,7 @@ The included demo suite contains ready-to-test synthetic citizen identities:
 
 Developed as an academic Information Security capstone project:
 - **G Mohnish Krishna Sai Kumar** ([AV.SC.U4CSE23013])
+- **Moulika**
 
 ---
 

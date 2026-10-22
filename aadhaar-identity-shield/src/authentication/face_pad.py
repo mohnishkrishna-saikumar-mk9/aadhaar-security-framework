@@ -3,8 +3,10 @@ import cv2
 import numpy as np
 import joblib
 
-BASE_DIR = r"D:\7th Semester\Information Security\aadhaar-inspired-security"
-MODEL_PATH = os.path.join(BASE_DIR, "models", "face_pad", "rf_face_pad.pkl")
+# Resolve model path relative to this file's location
+_SRC_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # src/
+_PROJECT_DIR = os.path.dirname(_SRC_DIR)  # aadhaar-identity-shield/
+MODEL_PATH = os.path.join(_PROJECT_DIR, "models", "face_pad", "rf_face_pad.pkl")
 
 class FacePAD:
     def __init__(self):
