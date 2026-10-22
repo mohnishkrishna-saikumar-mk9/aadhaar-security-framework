@@ -58,17 +58,6 @@ flowchart TD
     Gate5 -- Fail --> Deny5[❌ Blocked: Biometric Modality Mismatch]
 ```
 
-### Architectural Gate Breakdown
-
-| Gate | Verification Layer | Mathematical / Algorithmic Mechanism | Target Adversarial Threat | Response on Failure |
-| :---: | :--- | :--- | :--- | :--- |
-| **1** | **Credential Validation** | SHA-256 cryptographic hashing against salted local SQLite store | Brute-force credential guessing, unregistered IDs, database injection | Immediate abort before loading biometrics |
-| **2** | **Face Liveness (PAD)** | 96-dimensional RGB color histogram with Random Forest ensemble | 2D printed photographs, mobile screen replays, paper cutouts | Flagged as Face Presentation Attack |
-| **3** | **1:1 Face Verification** | 128-dimensional deep embeddings via **FaceNet** (`DeepFace`) | Facial impostors, identity swapping, GAN synthetic deepfakes | Flagged as Facial Impostor Attempt |
-| **4** | **Fingerprint Liveness (PAD)** | Local Binary Pattern (LBP) texture analysis & statistical variance | Gummy fingers, latex casts, gelatin prints, 3D printed molds | Flagged as Fingerprint Spoof Attack |
-| **5** | **1:1 Fingerprint Match** | ORB (Oriented FAST and Rotated BRIEF) with Hamming distance matching | Fingerprint cross-modal swapping, incorrect finger placement | Flagged as Biometric Mismatch |
-
-
 ---
 
 ## 🎬 Live System Demonstration Video
@@ -76,14 +65,22 @@ flowchart TD
 Experience the end-to-end execution of the **IdentityShield** 5-gate security pipeline in real-time. The demonstration highlights both seamless clearance for a bona fide citizen and immediate, automated hard-fail defense against presentation attacks, deepfake impostors, and cross-modal biometric swaps.
 
 <div align="center">
-  <video src="docs/demo_recording.mp4" controls="controls" width="100%" style="max-width: 880px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-    Your browser does not support the video tag. You can watch or download the recording directly using the link below.
-  </video>
+
+### 🎥 [▶️ Watch / Download Live Demo Video Recording (MP4 — 3m 41s)](docs/demo_recording.mp4)
+
+[![Play Full Demo Video](https://img.shields.io/badge/▶%20Play%20Full%20Demo%20Video-MP4%20(24MB)-red?style=for-the-badge&logo=youtube&logoColor=white)](docs/demo_recording.mp4)
+&nbsp;&nbsp;
+[![Direct Download MP4](https://img.shields.io/badge/⬇%20Direct%20Download-MP4%20(3m%2041s)-009688?style=for-the-badge&logo=googlechrome&logoColor=white)](docs/demo_recording.mp4)
+&nbsp;&nbsp;
+[![GitHub Video Stream](https://img.shields.io/badge/🔗%20Raw%20Stream-GitHub%20CDN-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mohnishkrishna-saikumar-mk9/aadhaar-security-framework/raw/main/docs/demo_recording.mp4)
+
+<p style="margin-top: 0.5rem; color: #64748b; font-size: 0.95rem;">
+  <i>Direct stream in browser or download for high-definition 1080p playback</i>
+</p>
+
 </div>
 
-<p align="center">
-  <b>▶️ <a href="docs/demo_recording.mp4">Download / Play High-Definition Demo Recording (MP4)</a></b>
-</p>
+<br/>
 
 ### 🎯 Test Scenarios Demonstrated in the Video
 
@@ -93,6 +90,18 @@ Experience the end-to-end execution of the **IdentityShield** 5-gate security pi
 | **2** | **Credential Brute-Force / Tampering** | `ID: 123456789999`<br/>*(Unenrolled / Fabricated ID)* | **Gate 1** | SHA-256 hash lookup fails against salted database; pipeline immediately aborts before biometric ingestion | ❌ **BLOCKED at Gate 1**<br/>`Access Denied: Credential not recognized` |
 | **3** | **Facial Impostor Attack** | `ID: 955137883716`<br/>`Face: man_6204.jpg` *(Impostor)*<br/>`FP: 540__F_Right_ring_finger.BMP` | **Gate 3** | FaceNet deep embedding distance exceeds strict cosine threshold ($\tau = 0.40$), identifying an unauthorized face presentation | ❌ **BLOCKED at Gate 3**<br/>`Face verification failed (NON-MATCH)` |
 | **4** | **Cross-Modal Biometric Swap** | `ID: 955137883716`<br/>`Face: woman_3434.jpg`<br/>`FP: 326__M_Left_ring_finger_CR.BMP` | **Gate 5** | ORB keypoint descriptor Hamming distance matching falls below minutiae acceptance threshold | ❌ **BLOCKED at Gate 5**<br/>`Fingerprint verification failed (NON-MATCH)` |
+
+---
+
+### 🛡️ Architectural Gate Breakdown
+
+| Gate | Verification Layer | Mathematical / Algorithmic Mechanism | Target Adversarial Threat | Response on Failure |
+| :---: | :--- | :--- | :--- | :--- |
+| **1** | **Credential Validation** | SHA-256 cryptographic hashing against salted local SQLite store | Brute-force credential guessing, unregistered IDs, database injection | Immediate abort before loading biometrics |
+| **2** | **Face Liveness (PAD)** | 96-dimensional RGB color histogram with Random Forest ensemble | 2D printed photographs, mobile screen replays, paper cutouts | Flagged as Face Presentation Attack |
+| **3** | **1:1 Face Verification** | 128-dimensional deep embeddings via **FaceNet** (`DeepFace`) | Facial impostors, identity swapping, GAN synthetic deepfakes | Flagged as Facial Impostor Attempt |
+| **4** | **Fingerprint Liveness (PAD)** | Local Binary Pattern (LBP) texture analysis & statistical variance | Gummy fingers, latex casts, gelatin prints, 3D printed molds | Flagged as Fingerprint Spoof Attack |
+| **5** | **1:1 Fingerprint Match** | ORB (Oriented FAST and Rotated BRIEF) with Hamming distance matching | Fingerprint cross-modal swapping, incorrect finger placement | Flagged as Biometric Mismatch |
 
 ---
 
@@ -326,7 +335,7 @@ All research documentation, formal academic reports, presentation slides, and ev
 
 Developed as an academic Information Security capstone project:
 - **G Mohnish Krishna Sai Kumar** ([AV.SC.U4CSE23013])
-- **Moulika**
+- **Pallapothu Moulika** ([AV.SC.U4CSE23036])
 
 ---
 
